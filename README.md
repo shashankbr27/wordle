@@ -1,20 +1,21 @@
 # 💕 Wordle ♥ — A Letter in Code
 
-A beautiful, fully-featured Wordle puzzle built with the MERN stack + Gemini AI.
-Made to share with friends and loved ones 💌
+A beautiful, fully-featured Wordle puzzle with React frontend + Python/Flask backend + Gemini AI.
 
 ---
 
 ## ✨ Features
 
 - 🎲 **Random word generation** via Gemini AI (4–10 letters)
-- 🌶️ **Custom word mode** — set a custom word for others to guess ("LET'S MAKE THINGS SPICY!")
+- 🔄 **Smart word tracking** — rarely repeats words (tracks last 50 per length!)
+- 🌶️ **Custom word mode** — set a custom word for others to guess
 - 🎨 **Gorgeous rose-gold dark theme** with animated background, confetti on win
 - 📱 **Fully responsive** — works perfectly on phone, tablet, desktop
-- 🎉 **Win popup**: "Yeeeeyyy you WON!"  |  ❌ **Lose popup**: "Oh no, well tried"
+- 🎉 **Win/lose popups** with beautiful animations
 - 🔤 **On-screen keyboard** + physical keyboard support
 - 🔁 **Play Again** button with fresh word each round
 - ✅ Correct letter repeat handling (e.g., SHEEP)
+- 🐍 **Python backend** — clean, efficient, and easy to extend!
 
 ---
 
@@ -36,20 +37,22 @@ Made to share with friends and loved ones 💌
    ```
    (replace USERNAME and PASSWORD with what you created)
 
-### Step 3 — Deploy Backend to Render (free)
+### Step 3 — Deploy Python Backend to Render (free)
 1. Push this project to a **GitHub** repo
 2. Go to [render.com](https://render.com) → Sign in with GitHub
 3. Click **New +** → **Web Service**
-4. Connect your repo → set **Root Directory** to `backend`
+4. Connect your repo → set **Root Directory** to `backend_python`
 5. Set these:
-   - **Build Command**: `npm install`
-   - **Start Command**: `node server.js`
+   - **Runtime**: Python 3
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `python server.py`
 6. Under **Environment Variables**, add:
    | Key | Value |
    |-----|-------|
    | `GEMINI_API_KEY` | your Gemini key |
    | `MONGO_URI` | your MongoDB Atlas URI |
    | `PORT` | `5000` |
+   | `PYTHON_VERSION` | `3.11.0` |
 7. Click **Create Web Service**
 8. Wait ~2 min. Copy your backend URL: `https://wordle-backend-xxxx.onrender.com`
 
@@ -75,12 +78,15 @@ Made to share with friends and loved ones 💌
 git clone <your-repo-url>
 cd wordle
 
-# 2. Setup backend
-cd backend
+# 2. Setup Python backend
+cd backend_python
+python -m venv venv
+# Windows: venv\Scripts\activate
+# Mac/Linux: source venv/bin/activate
+pip install -r requirements.txt
 cp .env.example .env
 # Fill in your GEMINI_API_KEY and MONGO_URI in .env
-npm install
-npm run dev
+python server.py
 
 # 3. Setup frontend (new terminal)
 cd frontend
@@ -90,6 +96,14 @@ npm start
 # Open http://localhost:3000
 ```
 
+### Alternative: Node.js Backend
+If you prefer Node.js, the original backend is still in the `backend` folder:
+```bash
+cd backend
+npm install
+npm run dev
+```
+
 ---
 
 ## 🛠️ Tech Stack
@@ -97,9 +111,10 @@ npm start
 | Layer | Tech |
 |-------|------|
 | Frontend | React 18 |
-| Backend | Node.js + Express |
-| Database | MongoDB + Mongoose |
-| AI Word Gen | Google Gemini 1.5 Flash |
+| Backend | Python 3.11 + Flask |
+| Database | MongoDB + PyMongo |
+| AI Word Gen | Google Gemini 2.5 Flash |
+| Word Tracking | Smart repetition prevention (last 50 words) |
 | Fonts | Playfair Display + DM Sans |
 | Deploy | Render (backend) + Vercel (frontend) |
 
@@ -112,8 +127,28 @@ npm start
 3. 🟨 **Yellow** = right letter, wrong spot
 4. ⬜ **Gray** = letter not in word
 5. Change word length (4–10 letters) using the picker
-6. Hit 🌶️ **Custom Word** to set a secret word for others to guess!
+6. Hit 🌶️ **Custom Word** to set a secret word for others to guess
 
 ---
 
-Made with 💕 and way too much caffeine.
+## 📁 Project Structure
+
+```
+wordle/
+├── backend/              # Node.js backend (alternative)
+├── backend_python/       # Python/Flask backend (recommended)
+│   ├── server.py        # Main Flask application
+│   ├── requirements.txt # Python dependencies
+│   ├── check_setup.py   # Setup verification script
+│   └── test_api.py      # API testing script
+├── frontend/            # React frontend
+│   ├── src/
+│   │   ├── App.js      # Main game logic
+│   │   └── App.css     # Styling
+│   └── public/
+└── README.md
+```
+
+---
+
+Made with 💕 and Python.

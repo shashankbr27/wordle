@@ -1,0 +1,10 @@
+# Development dependencies
+-r requirements.txt
+
+# Testing
+requests==2.31.0
+pytest==7.4.3
+
+# Code quality
+black==23.12.1
+flake8==7.0.0

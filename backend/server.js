@@ -25,7 +25,7 @@ const CustomWord = mongoose.model("CustomWord", CustomWordSchema);
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 async function fetchWordFromGemini(length) {
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
   const prompt = `Give me exactly one random common English word that is exactly ${length} letters long.
 Rules:
 - Return ONLY the single word, nothing else — no punctuation, no explanation, no sentence, no credits.

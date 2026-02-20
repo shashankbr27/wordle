@@ -317,8 +317,6 @@ export default function App() {
     }
   }, [fetchWord, wordLen]);
 
-  useEffect(() => { fetchWord(wordLen); }, []);
-
   // ── Confetti ─────────────────────────────────────────────────────────────────
   const spawnConfetti = () => {
     const items = Array.from({ length: 40 }, (_, i) => ({
@@ -395,18 +393,28 @@ export default function App() {
     setTimeout(() => setToast(""), 1800);
   };
 
-  const handleCustomWord = async (wordId) => {
+  const handleCustomWord = useCallback(async (wordId) => {
     setShowCustom(false);
+    setLoading(true);
     
     try {
       const res = await fetch(`${API_BASE}/api/custom-word/${wordId}`);
       const data = await res.json();
-      resetGame(null, data.word);
-      showToast(`Playing custom word! ${data.word.length} letters 🔥`);
+      
+      if (data.error) {
+        showToast("Failed to load custom word!");
+        fetchWord(wordLen);
+      } else {
+        resetGame(null, data.word);
+        showToast(`Playing custom word! ${data.word.length} letters 🔥`);
+      }
     } catch (e) {
       showToast("Failed to load custom word!");
+      fetchWord(wordLen);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [resetGame, fetchWord, wordLen]);
 
   // Check URL for shared word on mount
   useEffect(() => {
@@ -417,7 +425,7 @@ export default function App() {
     } else {
       fetchWord(wordLen);
     }
-  }, []);
+  }, [handleCustomWord, fetchWord, wordLen]);
 
   const keyStates = buildKeyStates(guesses, evaluations);
 

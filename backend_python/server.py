@@ -145,11 +145,14 @@ def create_custom_word():
             "word": clean,
             "created_at": datetime.utcnow()
         })
+        word_id = str(result.inserted_id)
+        print(f"Created custom word: {clean} with ID: {word_id}")
         return jsonify({
-            "id": str(result.inserted_id),
+            "id": word_id,
             "word": clean
         })
     except Exception as e:
+        print(f"Error creating custom word: {e}")
         return jsonify({"error": "Failed to save word"}), 500
 
 
@@ -157,6 +160,7 @@ def create_custom_word():
 def get_custom_word(word_id):
     """Retrieve a custom word by ID"""
     from bson.objectid import ObjectId
+    from bson.errors import InvalidId
     
     try:
         doc = custom_words.find_one({"_id": ObjectId(word_id)})
@@ -167,7 +171,10 @@ def get_custom_word(word_id):
             "word": doc["word"],
             "length": len(doc["word"])
         })
+    except InvalidId:
+        return jsonify({"error": "Invalid word ID"}), 400
     except Exception as e:
+        print(f"Error retrieving custom word: {e}")
         return jsonify({"error": "Failed to retrieve word"}), 500
 
 

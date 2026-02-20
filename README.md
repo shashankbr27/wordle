@@ -8,11 +8,12 @@ A beautiful, fully-featured Wordle puzzle with React frontend + Python/Flask bac
 
 - 🎲 **Random word generation** via Gemini AI (4–10 letters)
 - 🔄 **Smart word tracking** — rarely repeats words (tracks last 50 per length!)
-- 🌶️ **Custom word mode** — set a custom word for others to guess
+- 🌶️ **Custom word mode** — create your own Wordle and share it with a link!
+- 🔗 **Shareable links** — send custom word challenges to friends
 - 🎨 **Gorgeous rose-gold dark theme** with animated background, confetti on win
 - 📱 **Fully responsive** — works perfectly on phone, tablet, desktop
 - 🎉 **Win/lose popups** with beautiful animations
-- 🔤 **On-screen keyboard** + physical keyboard support
+- � ***On-screen keyboard** + physical keyboard support
 - 🔁 **Play Again** button with fresh word each round
 - ✅ Correct letter repeat handling (e.g., SHEEP)
 - 🐍 **Python backend** — clean, efficient, and easy to extend!
@@ -127,7 +128,17 @@ npm run dev
 3. 🟨 **Yellow** = right letter, wrong spot
 4. ⬜ **Gray** = letter not in word
 5. Change word length (4–10 letters) using the picker
-6. Hit 🌶️ **Custom Word** to set a secret word for others to guess
+6. Hit 🌶️ **Custom Word** to create your own Wordle challenge
+
+### Creating Custom Wordles
+
+1. Click the **🌶️ Custom Word** button
+2. Enter any 4-10 letter word
+3. Click **🔥 Create Link**
+4. Copy and share the link with friends!
+5. They'll have to guess YOUR word 😎
+
+Example: `https://yoursite.com?word=abc123`
 
 ---
 

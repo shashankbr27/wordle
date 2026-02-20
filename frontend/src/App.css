@@ -472,6 +472,53 @@ body {
   font-weight: 500;
 }
 
+/* ── Share Link ──────────────────────────────────────────────────────────────── */
+.share-link-container {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.share-link-input {
+  flex: 1;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  padding: 12px 16px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.share-link-input:focus {
+  border-color: var(--rose);
+}
+
+.btn--copy {
+  background: var(--rose);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn--copy:hover {
+  background: var(--rose-light);
+  transform: translateY(-2px);
+}
+
+.btn--copy:active {
+  transform: translateY(0);
+}
+
 /* ── Toast ───────────────────────────────────────────────────────────────────── */
 .toast {
   position: fixed;

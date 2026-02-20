@@ -148,38 +148,92 @@ function Popup({ won, word, onPlayAgain, onClose }) {
 function CustomWordModal({ onSubmit, onClose }) {
   const [input, setInput] = useState("");
   const [err, setErr] = useState("");
+  const [shareLink, setShareLink] = useState("");
+  const [copied, setCopied] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const clean = input.trim().toUpperCase().replace(/[^A-Z]/g, "");
     if (clean.length < 4 || clean.length > 10) {
       setErr("Word must be 4–10 letters long!");
       return;
     }
-    onSubmit(clean);
+    
+    try {
+      const res = await fetch(`${API_BASE}/api/custom-word`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ word: clean })
+      });
+      const data = await res.json();
+      
+      // Generate shareable link
+      const link = `${window.location.origin}?word=${data.id}`;
+      setShareLink(link);
+    } catch (e) {
+      setErr("Failed to create custom word. Try again!");
+    }
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(shareLink);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handlePlayNow = () => {
+    const wordId = shareLink.split("word=")[1];
+    onSubmit(wordId);
   };
 
   return (
     <div className="popup-overlay" onClick={onClose}>
       <div className="popup popup--custom" onClick={(e) => e.stopPropagation()}>
-        <div className="popup-emoji">🌶️</div>
-        <h2 className="popup-title spicy">LET'S MAKE THINGS SPICY!</h2>
-        <p className="popup-sub">Enter your word</p>
-        <input
-          className="custom-input"
-          maxLength={10}
-          value={input}
-          onChange={(e) => { setInput(e.target.value); setErr(""); }}
-          onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-          placeholder="Type a 4–10 letter word..."
-          autoFocus
-        />
-        {err && <p className="custom-error">{err}</p>}
-        <div className="popup-actions">
-          <button className="btn btn--spicy" onClick={handleSubmit}>
-            🔥 Set Word
-          </button>
-          <button className="btn btn--ghost" onClick={onClose}>Cancel</button>
-        </div>
+        {!shareLink ? (
+          <>
+            <div className="popup-emoji">🌶️</div>
+            <h2 className="popup-title spicy">CREATE YOUR WORDLE!</h2>
+            <p className="popup-sub">Enter a word and share it with friends</p>
+            <input
+              className="custom-input"
+              maxLength={10}
+              value={input}
+              onChange={(e) => { setInput(e.target.value); setErr(""); }}
+              onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+              placeholder="Type a 4–10 letter word..."
+              autoFocus
+            />
+            {err && <p className="custom-error">{err}</p>}
+            <div className="popup-actions">
+              <button className="btn btn--spicy" onClick={handleSubmit}>
+                🔥 Create Link
+              </button>
+              <button className="btn btn--ghost" onClick={onClose}>Cancel</button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="popup-emoji">🎉</div>
+            <h2 className="popup-title">Link Created!</h2>
+            <p className="popup-sub">Share this link with your friends</p>
+            <div className="share-link-container">
+              <input
+                className="share-link-input"
+                value={shareLink}
+                readOnly
+                onClick={(e) => e.target.select()}
+              />
+              <button className="btn btn--copy" onClick={handleCopy}>
+                {copied ? "✓ Copied!" : "📋 Copy"}
+              </button>
+            </div>
+            <div className="popup-actions">
+              <button className="btn btn--primary" onClick={handlePlayNow}>
+                ▶️ Play Now
+              </button>
+              <button className="btn btn--ghost" onClick={onClose}>Close</button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
@@ -341,11 +395,29 @@ export default function App() {
     setTimeout(() => setToast(""), 1800);
   };
 
-  const handleCustomWord = async (word) => {
+  const handleCustomWord = async (wordId) => {
     setShowCustom(false);
-    resetGame(null, word);
-    showToast(`Custom word set! ${word.length} letters 🔥`);
+    
+    try {
+      const res = await fetch(`${API_BASE}/api/custom-word/${wordId}`);
+      const data = await res.json();
+      resetGame(null, data.word);
+      showToast(`Playing custom word! ${data.word.length} letters 🔥`);
+    } catch (e) {
+      showToast("Failed to load custom word!");
+    }
   };
+
+  // Check URL for shared word on mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const wordId = params.get("word");
+    if (wordId) {
+      handleCustomWord(wordId);
+    } else {
+      fetchWord(wordLen);
+    }
+  }, []);
 
   const keyStates = buildKeyStates(guesses, evaluations);
 
